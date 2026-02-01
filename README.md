@@ -6,7 +6,7 @@
 
 Generate compositions in the style of **Piet Mondrian** directly in Inkscape!
 
-![Mondrian Examples](screenshots/example-grid.png)
+![Mondrian Examples](screenshots/example_1.png)
 
 ## ✨ Features
 
@@ -20,7 +20,7 @@ Generate compositions in the style of **Piet Mondrian** directly in Inkscape!
 ## 🚀 Quick Install
 
 ### Method 1: Direct Download
-1. Download the latest release: [mondrian-grid-generator.zip](https://github.com/yusdesign/mondrian-grid-generator/releases)
+1. Download the latest release: [mondrian-grid.zip](https://github.com/yusdesign/mondrian-grid/releases)
 2. Extract and copy `mondriangrid.inx` and `mondriangrid.py` to:
    - **Windows**: `%APPDATA%\inkscape\extensions\`
    - **Linux**: `~/.config/inkscape/extensions/`
