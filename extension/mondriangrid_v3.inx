@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <name>Mondrian Grid Generator v3</name>
+    <id>org.inkscape.render.mondriangrid.v3</id>
+    
+    <!-- === CANVAS SETTINGS === -->
+    <param name="width" type="float" min="100" max="5000"
+           gui-text="Canvas Width" gui-description="Width in pixels">800</param>
+    <param name="height" type="float" min="100" max="5000"
+           gui-text="Canvas Height" gui-description="Height in pixels">600</param>
+    
+    <!-- === GRID SETTINGS === -->
+    <param name="vertical_lines" type="int" min="1" max="20"
+           gui-text="Vertical Lines" gui-description="Number of vertical grid lines">4</param>
+    <param name="horizontal_lines" type="int" min="1" max="20"
+           gui-text="Horizontal Lines" gui-description="Number of horizontal grid lines">5</param>
+    <param name="line_thickness" type="float" min="0.5" max="20.0"
+           gui-text="Line Thickness" gui-description="Thickness of grid lines">3.0</param>
+    <param name="margin" type="float" min="0" max="0.3"
+           gui-text="Margin" gui-description="Space from edges (0-0.3)">0.05</param>
+    
+    <!-- === COLOR SETTINGS === -->
+    <param name="color_density" type="float" min="0" max="1"
+           gui-text="Color Density" gui-description="Percentage of rectangles to color">0.3</param>
+    <param name="palette" type="optiongroup" appearance="combo"
+           gui-text="Color Palette" gui-description="Choose color palette">
+        <_option value="classic">Classic Mondrian</_option>
+        <_option value="modern">Modern Colors</_option>
+        <_option value="grayscale">Grayscale</_option>
+        <_option value="primary">Primary Colors</_option>
+        <_option value="pastel">Pastel Colors</_option>
+    </param>
+    
+    <!-- === COMPOSITION CONTROL === -->
+    <param name="distribution" type="float" min="0" max="1"
+           gui-text="Line Distribution" gui-description="0=Random, 1=Structured">0.6</param>
+    <param name="balance" type="float" min="0" max="1"
+           gui-text="Color Balance" gui-description="0=Random, 1=Strategic">0.5</param>
+    <param name="randomness" type="float" min="0" max="0.5"
+           gui-text="Line Randomness" gui-description="Randomness in line placement">0.15</param>
+    
+    <!-- === RANDOMNESS === -->
+    <param name="seed" type="int" min="0" max="999999"
+           gui-text="Random Seed" gui-description="0 for random, any number for reproducible">0</param>
+    
+    <!-- === ADVANCED SETTINGS === -->
+    <param name="min_rect_size" type="float" min="5" max="200"
+           gui-text="Minimum Rectangle Size" gui-description="Smallest rectangle to color">20</param>
+    <param name="add_background" type="boolean"
+           gui-text="Add Background" gui-description="Add background rectangle">true</param>
+    <param name="group_elements" type="boolean"
+           gui-text="Group Elements" gui-description="Group all generated elements">true</param>
+    <param name="vary_thickness" type="boolean"
+           gui-text="Vary Line Thickness" gui-description="Randomize line thickness">false</param>
+    
+    <effect>
+        <object-type>all</object-type>
+        <effects-menu>
+            <submenu name="Render"/>
+        </effects-menu>
+    </effect>
+    
+    <script>
+        <command location="inx" interpreter="python">mondriangrid_v3.py</command>
+    </script>
+</inkscape-extension>
