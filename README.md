@@ -2,7 +2,7 @@
 
 [![Inkscape Extension](https://img.shields.io/badge/Inkscape-Extension-blue.svg)](https://inkscape.org)
 [![Python 3](https://img.shields.io/badge/Python-3-green.svg)](https://python.org)
-[![License: GPL v2+](https://img.shields.io/badge/License-GPL%20v2+-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Generate compositions in the style of **Piet Mondrian** directly in Inkscape!
 
