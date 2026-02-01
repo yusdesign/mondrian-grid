@@ -6,6 +6,8 @@
 
 Generate compositions in the style of **Piet Mondrian** directly in Inkscape!
 
+<img src="icon.svg" /> 
+
 ![Mondrian Grid UI](screenshots/ui_screenshot.png)
 
 ## ✨ Features
