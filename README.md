@@ -48,29 +48,29 @@ cp mondriangrid_v3.* ~/.config/inkscape/extensions/
 
 ## 🎨 Parameters Explained  
 
-### Canvas Settings
+### Canvas Settings  
 
- Width/Height: Dimensions of the generated composition
- Margin: Space from edges (prevents lines at borders)
+ Width/Height: Dimensions of the generated composition  
+ Margin: Space from edges (prevents lines at borders)  
 
-### Grid Settings
+### Grid Settings  
 
- Vertical/Horizontal Lines: Number of grid divisions
- Line Thickness: Thickness of black grid lines
- Margin: Space from edges
+ Vertical/Horizontal Lines: Number of grid divisions  
+ Line Thickness: Thickness of black grid lines  
+ Margin: Space from edges  
 
-### Color Settings
+### Color Settings  
 
- Color Palette: Choose from 5 different palettes
- Color Density: Percentage of rectangles to color
+ Color Palette: Choose from 5 different palettes  
+ Color Density: Percentage of rectangles to color  
 
-### Composition Control
+### Composition Control  
 
- Distribution: Controls line placement (0=Random, 1=Structured)
- Balance: Controls color placement (0=Random, 1=Strategic)
- Randomness: Additional randomness in line placement
+ Distribution: Controls line placement (0=Random, 1=Structured)  
+ Balance: Controls color placement (0=Random, 1=Strategic)  
+ Randomness: Additional randomness in line placement  
 
-### Advanced
+### Advanced  
 
  Random Seed: 0 for random, any number for reproducible results  
  Minimum Rectangle Size: Skip coloring very small rectangles  
