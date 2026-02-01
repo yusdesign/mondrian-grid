@@ -6,7 +6,7 @@
 
 Generate compositions in the style of **Piet Mondrian** directly in Inkscape!
 
-![Mondrian Examples](screenshots/example_1.png)
+![Mondrian Examples](screenshots/example_2.png)
 
 ## ✨ Features
 
@@ -32,71 +32,55 @@ Generate compositions in the style of **Piet Mondrian** directly in Inkscape!
 git clone https://github.com/yusdesign/mondrian-grid-generator.git
 cd mondrian-grid-generator/extension
 cp mondriangrid.* ~/.config/inkscape/extensions/
+```
 
 📖 Usage
 
     Open Inkscape
-
     Go to Extensions → Render → Mondrian Grid Generator
-
     Adjust parameters:
-
         Canvas: Set width and height
-
         Grid: Lines, thickness, margin
-
         Colors: Palette and density
-
         Composition: Distribution, Balance, Randomness
-
         Advanced: Random seed, grouping options
-
     Click Apply
 
-🎨 Parameters Explained
+🎨 Parameters Explained  
+
 Canvas Settings
 
     Width/Height: Dimensions of the generated composition
-
     Margin: Space from edges (prevents lines at borders)
 
 Grid Settings
 
     Vertical/Horizontal Lines: Number of grid divisions
-
     Line Thickness: Thickness of black grid lines
-
     Margin: Space from edges
 
 Color Settings
 
     Color Palette: Choose from 5 different palettes
-
     Color Density: Percentage of rectangles to color
 
 Composition Control
 
     Distribution: Controls line placement (0=Random, 1=Structured)
-
     Balance: Controls color placement (0=Random, 1=Strategic)
-
     Randomness: Additional randomness in line placement
 
 Advanced
 
     Random Seed: 0 for random, any number for reproducible results
-
     Minimum Rectangle Size: Skip coloring very small rectangles
-
     Group Elements: Group all generated elements together
-
     Add Background: Add white background rectangle
-
     Vary Line Thickness: Randomize line thickness slightly
 
 🖼️ Examples
-Classic Mondrian	Modern Composition	Chaotic Abstract
-https://screenshots/classic.png	https://screenshots/modern.png	https://screenshots/chaotic.png
+      screenshots/
+      examples/
 
 Example Settings:
 
@@ -108,30 +92,29 @@ Example Settings:
 
 🛠️ Development
 Project Structure
-text
 
+```text
 extension/
-├── mondriangrid.py      # Main Python extension
-├── mondriangrid.inx     # Extension definition (GUI)
+├── mondriangrid_v3.py      # Main Python extension
+├── mondriangrid_v3.inx     # Extension definition (GUI)
 └── icon.svg            # Optional icon
-
+```
 Requirements
 
     Inkscape 1.0+ (tested with 1.4.3)
-
     Python 3.6+ (bundled with Inkscape)
-
     inkex module (bundled with Inkscape)
 
 Building from Source
-bash
 
+```bash
 # Clone repository
-git clone https://github.com/yusdesign/mondrian-grid-generator.git
+git clone https://github.com/yusdesign/mondrian-grid.git
 
 # Install for development
 cd mondrian-grid-generator
 ./install-local.sh
+```
 
 🤝 Contributing
 
@@ -182,5 +165,5 @@ Compatible with Inkscape's extension licensing requirements.
 
     Inkscape Forum: Extension Development
 
-"The position of the artist is humble. He is essentially a channel."
-— Piet Mondrian
+*"The position of the artist is humble. He is essentially a channel."
+— Piet Mondrian*
