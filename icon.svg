@@ -177,6 +177,10 @@
      inkscape:label="Mondrian 100.0x100.0"
      inkscape:groupmode="layer"
      id="layer1">
+    <path
+       id="rect179"
+       style="fill:#ffffff"
+       d="M 0,0 H 100 V 100 H 0 Z" />
     <g
        id="g179">
       <rect
