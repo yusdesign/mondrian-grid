@@ -6,7 +6,7 @@
 
 Generate compositions in the style of **Piet Mondrian** directly in Inkscape!
 
-![Mondrian Examples](screenshots/example_1.png)
+![Mondrian Examples](screenshots/example_2.png)
 
 ## ✨ Features
 
