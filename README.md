@@ -1,5 +1,6 @@
 <img src="icon.svg" />  
-# 🎨 Mondrian Grid Generator for Inkscape
+
+# 🎨 Mondrian Grid Generator for Inkscape  
 
 [![Inkscape Extension](https://img.shields.io/badge/Inkscape-Extension-blue.svg)](https://inkscape.org)
 [![Python 3](https://img.shields.io/badge/Python-3-green.svg)](https://python.org)
