@@ -1,4 +1,4 @@
-<img src="icon.svg" />  
+   <img src="icon.svg" />  
 
 # 🎨 Mondrian Grid Generator for Inkscape  
 
@@ -149,5 +149,5 @@ MIT, 2026
 *"The position of the artist is humble. He is essentially a channel."
 — Piet Mondrian*
 
-![Mondrian Example](screenshots/example_2.png)
+   ![Mondrian Example](screenshots/example_2.png)
 
