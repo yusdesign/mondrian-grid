@@ -34,7 +34,7 @@ cd mondrian-grid/extension
 cp mondriangrid_v3.* ~/.config/inkscape/extensions/
 ```
 
-📖 Usage
+## 📖 Usage
 
  Open Inkscape
  Go to Extensions → Render → Mondrian Grid Generator
@@ -46,31 +46,31 @@ cp mondriangrid_v3.* ~/.config/inkscape/extensions/
      Advanced: Random seed, grouping options
  Click Apply
 
-🎨 Parameters Explained  
+## 🎨 Parameters Explained  
 
-####Canvas Settings
+### Canvas Settings
 
  Width/Height: Dimensions of the generated composition
  Margin: Space from edges (prevents lines at borders)
 
-####Grid Settings
+### Grid Settings
 
  Vertical/Horizontal Lines: Number of grid divisions
  Line Thickness: Thickness of black grid lines
  Margin: Space from edges
 
-####Color Settings
+### Color Settings
 
  Color Palette: Choose from 5 different palettes
  Color Density: Percentage of rectangles to color
 
-####Composition Control
+### Composition Control
 
  Distribution: Controls line placement (0=Random, 1=Structured)
  Balance: Controls color placement (0=Random, 1=Strategic)
  Randomness: Additional randomness in line placement
 
-####Advanced
+### Advanced
 
  Random Seed: 0 for random, any number for reproducible results  
  Minimum Rectangle Size: Skip coloring very small rectangles  
@@ -78,19 +78,19 @@ cp mondriangrid_v3.* ~/.config/inkscape/extensions/
  Add Background: Add white background rectangle  
  Vary Line Thickness: Randomize line thickness slightly  
 
-🖼️ Examples
+## 🖼️ Examples
       screenshots/  
       examples/  
 
-Example Settings:
+### Example Settings:
 
  Classic: Distribution=0.8, Balance=0.8, Palette=classic  
  Modern: Distribution=0.6, Balance=0.5, Palette=modern  
  Chaotic: Distribution=0.3, Balance=0.2, Randomness=0.3  
 
-🛠️ Development  
+## 🛠️ Development  
 
-Project Structure
+### Project Structure  
 ```text
 extension/
 ├── mondriangrid_v3.py      # Main Python extension
@@ -98,18 +98,18 @@ extension/
 └── icon.svg            # Optional icon
 ```
 
-Requirements
+### Requirements  
  Inkscape 1.0+ (tested with 1.4.3)
  Python 3.6+ (bundled with Inkscape)
  inkex module (bundled with Inkscape)
 
-Building from Source
+### Building from Source  
 ```bash
 # Clone repository
 git clone https://github.com/yusdesign/mondrian-grid.git
 ```
 
-🤝 Contributing
+## 🤝 Contributing
 
 ####Contributions are welcome! Here's how:
 
@@ -119,7 +119,7 @@ git clone https://github.com/yusdesign/mondrian-grid.git
  Test thoroughly
  Submit a pull request
 
-####Ideas for Contributions
+### Ideas for Contributions
 
  Add new color palettes
  Implement different composition algorithms
@@ -128,17 +128,17 @@ git clone https://github.com/yusdesign/mondrian-grid.git
  Improve performance for large grids
  Add export options (patterns, swatches)
 
-📄 License
+## 📄 License
 
 MIT, 2026
 
-🙏 Acknowledgments
+## 🙏 Acknowledgments
 
  Inspired by Piet Mondrian's Neo-plasticism
  Built for the amazing Inkscape community
  Thanks to all contributors and testers
 
-📞 Support
+## 📞 Support
 
  Issues: GitHub Issues
  Discussions: GitHub Discussions
