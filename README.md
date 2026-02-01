@@ -1,12 +1,10 @@
-# 🎨 Mondrian Grid Generator for Inkscape
+<img src="icon.svg" /> # 🎨 Mondrian Grid Generator for Inkscape
 
 [![Inkscape Extension](https://img.shields.io/badge/Inkscape-Extension-blue.svg)](https://inkscape.org)
 [![Python 3](https://img.shields.io/badge/Python-3-green.svg)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Generate compositions in the style of **Piet Mondrian** directly in Inkscape!
-
-<img src="icon.svg" /> 
 
 ![Mondrian Grid UI](screenshots/ui_screenshot.png)
 
