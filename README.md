@@ -151,3 +151,7 @@ MIT, 2026
 
    ![Mondrian Example](screenshots/example_2.png)
 
+#### *Earn for mutual coffee*
+
+[T-bank Partner](https://tbank.ru/baf/9oWtJTRobAa)
+
