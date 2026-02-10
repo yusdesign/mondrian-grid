@@ -153,5 +153,6 @@ MIT, 2026
 
 #### *Earn for mutual coffee*
 
-[T-bank Partner](https://tbank.ru/baf/9oWtJTRobAa)
+[T-bank Partner](https://tbank.ru/baf/9oWtJTRobAa)  
+[OTP](https://r.otpbank.ru/cc/jZZTSZ)
 
