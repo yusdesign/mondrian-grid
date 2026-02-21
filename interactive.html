@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Mondrian Grid · Inkscape extension · interactive preview</title>
+  <style>
+    /* ultracompact · zero roundness · mobile first */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f3f2ee;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      line-height: 1.4;
+      color: #1c1c1c;
+      padding: 0.5rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 2px solid #111;
+      box-shadow: 8px 8px 0 #000;
+      padding: 1.5rem 1.2rem;
+    }
+
+    h1, h2, h3, p, pre, code, button, .tag, .param-item {
+      border-radius: 0 !important;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      border-bottom: 3px solid #111;
+      padding-bottom: 0.3rem;
+      margin-bottom: 1.2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.5rem 1rem;
+    }
+
+    .repo-link {
+      font-size: 1rem;
+      font-weight: 400;
+      background: #eee;
+      padding: 0.2rem 0.6rem;
+      border: 2px solid #222;
+      text-decoration: none;
+      color: #111;
+      transition: 0.1s ease;
+    }
+
+    .repo-link:hover {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+
+    /* INTERACTIVE PANEL - main new section */
+    .interactive-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 2rem 0;
+      border: 3px solid #000;
+      padding: 1.5rem;
+      background: #faf8f4;
+    }
+
+    @media (max-width: 800px) {
+      .interactive-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .preview-area {
+      background: #fff;
+      border: 3px solid #111;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #mondrianCanvas {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: white;
+      border-bottom: 3px solid #111;
+    }
+
+    .canvas-stats {
+      padding: 0.5rem;
+      font-family: monospace;
+      font-size: 0.8rem;
+      background: #eee;
+      border-top: 2px solid #888;
+    }
+
+    .controls-panel {
+      border: 3px solid #111;
+      padding: 1rem;
+      background: #fff;
+    }
+
+    .control-group {
+      margin-bottom: 1.2rem;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.8rem;
+    }
+
+    .control-group h3 {
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .slider-row label {
+      min-width: 100px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .slider-row input[type=range] {
+      flex: 1;
+      height: 4px;
+      background: #111;
+      border: 2px solid #111;
+      -webkit-appearance: none;
+    }
+
+    .slider-row input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border: 2px solid #111;
+      cursor: pointer;
+    }
+
+    .slider-row span {
+      min-width: 40px;
+      font-family: monospace;
+      font-size: 0.85rem;
+    }
+
+    .select-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .select-row select {
+      flex: 1;
+      padding: 0.3rem;
+      border: 2px solid #111;
+      background: #fff;
+      font-family: inherit;
+      border-radius: 0;
+    }
+
+    .number-input {
+      width: 70px;
+      border: 2px solid #111;
+      padding: 0.2rem;
+      font-family: monospace;
+    }
+
+    .button-primary {
+      background: #111;
+      color: #fff;
+      border: 2px solid #000;
+      padding: 0.6rem 1.2rem;
+      font-weight: 700;
+      width: 100%;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .button-primary:hover {
+      background: #fff;
+      color: #111;
+    }
+
+    .preset-badge {
+      display: inline-block;
+      background: #eee;
+      border: 2px solid #111;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-right: 0.3rem;
+      cursor: pointer;
+    }
+
+    .preset-badge:hover {
+      background: #111;
+      color: #fff;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 0.8rem;
+      margin: 2rem 0 1.5rem;
+    }
+
+    .feature-item {
+      background: #fff;
+      border: 2px solid #000;
+      padding: 0.75rem 0.6rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-align: center;
+      box-shadow: 3px 3px 0 #888;
+    }
+
+    .install-steps {
+      background: #f0ede8;
+      border: 2px solid #111;
+      padding: 1.2rem;
+      margin: 1.8rem 0;
+    }
+
+    pre {
+      background: #111;
+      color: #ddd;
+      padding: 0.7rem 1rem;
+      border: 2px solid #000;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0.6rem 0;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 1.8rem;
+      margin-top: 1rem;
+      border-top: 2px solid #111;
+      padding-top: 1.2rem;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 0.2rem; }
+      .container { padding: 1rem 0.8rem; box-shadow: 4px 4px 0 #000; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>
+    ⬛ Mondrian Grid · Inkscape
+    <a href="https://github.com/yusdesign/mondrian-grid" class="repo-link" target="_blank" rel="noopener">github/yusdesign</a>
+  </h1>
+
+  <!-- INTERACTIVE PREVIEW PANEL (replaces examples section) -->
+  <div class="interactive-panel">
+    <!-- Left: Canvas preview -->
+    <div class="preview-area">
+      <canvas id="mondrianCanvas" width="400" height="400"></canvas>
+      <div class="canvas-stats" id="canvasStats">
+        ⬛ grid: 5v × 5h · 🎨 density: 40% · seed: random
+      </div>
+    </div>
+
+    <!-- Right: Live controls (mirroring extension parameters) -->
+    <div class="controls-panel">
+      <div style="display: flex; gap: 0.3rem; margin-bottom: 1rem; flex-wrap: wrap;">
+        <span class="preset-badge" onclick="loadPreset('classic')">CLASSIC</span>
+        <span class="preset-badge" onclick="loadPreset('modern')">MODERN</span>
+        <span class="preset-badge" onclick="loadPreset('chaotic')">CHAOTIC</span>
+        <span class="preset-badge" onclick="randomizeAll()">🎲 RANDOM</span>
+      </div>
+
+      <!-- Canvas settings (from INX: width/height/margin) -->
+      <div class="control-group">
+        <h3>📐 CANVAS</h3>
+        <div class="slider-row">
+          <label>Width/Height</label>
+          <input type="range" id="canvasSize" min="200" max="600" value="400" step="10" oninput="updatePreview()">
+          <span id="sizeVal">400</span>
+        </div>
+        <div class="slider-row">
+          <label>Margin</label>
+          <input type="range" id="marginSize" min="0" max="60" value="20" step="2" oninput="updatePreview()">
+          <span id="marginVal">20</span>
+        </div>
+      </div>
+
+      <!-- Grid settings (lines, thickness) -->
+      <div class="control-group">
+        <h3>▬ GRID</h3>
+        <div class="slider-row">
+          <label>Vertical lines</label>
+          <input type="range" id="vertLines" min="2" max="12" value="5" step="1" oninput="updatePreview()">
+          <span id="vertVal">5</span>
+        </div>
+        <div class="slider-row">
+          <label>Horizontal lines</label>
+          <input type="range" id="horzLines" min="2" max="12" value="5" step="1" oninput="updatePreview()">
+          <span id="horzVal">5</span>
+        </div>
+        <div class="slider-row">
+          <label>Line thickness</label>
+          <input type="range" id="lineThick" min="1" max="8" value="3" step="0.5" oninput="updatePreview()">
+          <span id="thickVal">3.0</span>
+        </div>
+        <div class="slider-row">
+          <label>Vary thickness</label>
+          <input type="range" id="varyThick" min="0" max="1" value="0.2" step="0.1" oninput="updatePreview()">
+          <span id="varyVal">0.2</span>
+        </div>
+      </div>
+
+      <!-- Color settings (palette + density) -->
+      <div class="control-group">
+        <h3>🎨 COLOR</h3>
+        <div class="select-row">
+          <label>Palette</label>
+          <select id="paletteSelect" onchange="updatePreview()">
+            <option value="classic" selected>Classic (red/blue/yellow)</option>
+            <option value="modern">Modern (teal/orange/purple)</option>
+            <option value="grayscale">Grayscale</option>
+            <option value="primary">Primary (bold primaries)</option>
+            <option value="pastel">Pastel</option>
+          </select>
+        </div>
+        <div class="slider-row">
+          <label>Color density</label>
+          <input type="range" id="colorDensity" min="0" max="1" value="0.4" step="0.05" oninput="updatePreview()">
+          <span id="densityVal">0.40</span>
+        </div>
+      </div>
+
+      <!-- Composition sliders (distribution, balance, randomness) -->
+      <div class="control-group">
+        <h3>⚙️ COMPOSITION</h3>
+        <div class="slider-row">
+          <label>Distribution</label>
+          <input type="range" id="distribution" min="0" max="1" value="0.7" step="0.05" oninput="updatePreview()">
+          <span id="distVal">0.70</span>
+        </div>
+        <div class="slider-row">
+          <label>Balance</label>
+          <input type="range" id="balance" min="0" max="1" value="0.6" step="0.05" oninput="updatePreview()">
+          <span id="balVal">0.60</span>
+        </div>
+        <div class="slider-row">
+          <label>Randomness</label>
+          <input type="range" id="randomness" min="0" max="1" value="0.3" step="0.05" oninput="updatePreview()">
+          <span id="randVal">0.30</span>
+        </div>
+      </div>
+
+      <!-- Advanced: seed, min size, background -->
+      <div class="control-group">
+        <h3>🧩 ADVANCED</h3>
+        <div class="slider-row">
+          <label>Random seed</label>
+          <input type="number" id="seedInput" class="number-input" value="42" min="0" max="9999" onchange="updatePreview()">
+          <span style="font-size:0.7rem;">(0 = random)</span>
+        </div>
+        <div class="slider-row">
+          <label>Min rect size</label>
+          <input type="range" id="minSize" min="0" max="0.3" value="0.05" step="0.01" oninput="updatePreview()">
+          <span id="minVal">0.05</span>
+        </div>
+        <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+          <label style="display: flex; align-items: center; gap: 0.2rem;">
+            <input type="checkbox" id="bgCheck" checked onchange="updatePreview()"> white bg
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.2rem;">
+            <input type="checkbox" id="groupCheck" onchange="updatePreview()"> group
+          </label>
+        </div>
+      </div>
+
+      <button class="button-primary" onclick="randomizeAll()">🎲 RANDOMIZE ALL & REGENERATE</button>
+    </div>
+  </div>
+
+  <!-- FEATURE SNAPSHOT -->
+  <div class="feature-grid">
+    <div class="feature-item">🎨 5 palettes</div>
+    <div class="feature-item">⚖️ balance slider</div>
+    <div class="feature-item">📐 distribution</div>
+    <div class="feature-item">🔄 random seed</div>
+    <div class="feature-item">▦ variable lines</div>
+    <div class="feature-item">⬜ background opt</div>
+  </div>
+
+  <!-- QUOTE -->
+  <p style="font-size: 1.1rem; border-left: 6px solid #111; padding-left: 1rem; margin: 1.2rem 0;">
+    <em>“The position of the artist is humble. He is essentially a channel.”</em> — Piet Mondrian
+  </p>
+
+  <!-- INSTALL SECTION -->
+  <div class="install-steps">
+    <h2 style="font-size: 1.6rem; margin-bottom: 0.8rem;">⬇️ quick install</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 1.2rem;">
+      <div style="flex: 2; min-width: 200px;">
+        <p><strong>📦 method 1: direct download</strong><br>
+        <code>mondrian-grid.zip</code> – copy two files:</p>
+        <pre>mondriangrid_v3.inx  &  mondriangrid_v3.py</pre>
+        <p>📍 to Inkscape extensions folder:</p>
+        <ul style="list-style-type: none; padding-left: 0.2rem;">
+          <li>🪟 <code>%APPDATA%\inkscape\extensions\</code></li>
+          <li>🐧 <code>~/.config/inkscape/extensions/</code></li>
+          <li>🍏 <code>~/Library/Application Support/inkscape/extensions/</code></li>
+        </ul>
+      </div>
+      <div style="flex: 1.2;">
+        <p><strong>🧪 method 2: source</strong></p>
+        <pre>git clone https://github.com/yusdesign/mondrian-grid.git
+cd mondrian-grid/extension
+cp mondriangrid_v3.* ~/.config/inkscape/extensions/</pre>
+        <p class="button" style="display: inline-block; margin-top: 0.3rem; border:2px solid #111; padding:0.5rem;">restart Inkscape</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEVELOPMENT / CONTRIBUTE BLOCK -->
+  <hr style="border-top:3px solid #111;">
+  <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between;">
+    <div>
+      <h3 style="font-weight: 800;">🛠️ development</h3>
+      <pre style="background: #eee; color: #111; border-color: black;">extension/
+├── mondriangrid_v3.py
+├── mondriangrid_v3.inx
+└── icon.svg (opt)</pre>
+      <p>Inkscape 1.0+ · Python 3.6+ · inkex bundled</p>
+    </div>
+    <div>
+      <h3 style="font-weight: 800;">🤝 contribute</h3>
+      <ul style="list-style-type: square; padding-left: 1.5rem;">
+        <li>fork / feature branch</li>
+        <li>new palettes / algorithms</li>
+        <li>preview or presets</li>
+        <li>performance</li>
+      </ul>
+      <p><span class="button" style="border:2px solid #111; padding:0.5rem;">pull request →</span></p>
+    </div>
+    <div>
+      <h3 style="font-weight: 800;">📄 license</h3>
+      <p>MIT · 2026</p>
+    </div>
+  </div>
+
+  <!-- SUPPORT & FOOTER -->
+  <div class="footer-links">
+    <a href="#" class="button" style="text-decoration: none; border:2px solid #111; padding:0.5rem;">🐛 GitHub Issues</a>
+    <a href="#" class="button" style="text-decoration: none; border:2px solid #111; padding:0.5rem;">💬 Discussions</a>
+    <span class="button" style="border:2px solid #111; padding:0.5rem;">📧 Inkscape Forum</span>
+    <span style="margin-left: auto; font-size: 0.9rem; align-self: center;">☕ buy us a coffee?</span>
+  </div>
+
+  <!-- zero roundness badge -->
+  <div style="margin-top: 1rem; text-align: right; border-top: 2px solid #111; padding-top: 0.5rem; font-size: 0.75rem; display: flex; justify-content: space-between;">
+    <span>mondrian grid v3 · interactive preview · roundness = 0</span>
+    <span>📱 mobile scroll + touch sliders</span>
+  </div>
+</div>
+
+<script>
+// ==================== MONDRIAN GENERATOR ENGINE ====================
+// Recreates core logic from the Inkscape extension in JavaScript
+
+let currentSeed = 42;
+
+// Pseudo-random number generator with seed
+function seededRandom(seed) {
+  let x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+
+// Get current random function (respects seed input)
+function getRNG() {
+  let seed = parseInt(document.getElementById('seedInput').value) || 0;
+  if (seed === 0) {
+    // truly random
+    return Math.random;
+  } else {
+    // seeded
+    return () => {
+      seed = (seed * 9301 + 49297) % 233280;
+      return seed / 233280;
+    };
+  }
+}
+
+// Color palettes (matching extension)
+const palettes = {
+  classic: ['#D12E2E', '#2E4A7A', '#E3B23C', '#FFFFFF'], // red, blue, yellow, white
+  modern: ['#2E5E4E', '#C44545', '#4A6FA5', '#E0D3C3'],
+  grayscale: ['#222222', '#555555', '#888888', '#CCCCCC'],
+  primary: ['#FF4136', '#0074D9', '#FFDC00', '#FFFFFF'],
+  pastel: ['#FFB3BA', '#BAE1FF', '#C4E3CB', '#FFF5BA']
+};
+
+// Main update function
+function updatePreview() {
+  const canvas = document.getElementById('mondrianCanvas');
+  const ctx = canvas.getContext('2d');
+  const size = parseInt(document.getElementById('canvasSize').value);
+  canvas.width = size;
+  canvas.height = size;
+
+  // Get all current values
+  const margin = parseInt(document.getElementById('marginSize').value);
+  const vertLines = parseInt(document.getElementById('vertLines').value);
+  const horzLines = parseInt(document.getElementById('horzLines').value);
+  const baseThick = parseFloat(document.getElementById('lineThick').value);
+  const varyThick = parseFloat(document.getElementById('varyThick').value);
+  const paletteName = document.getElementById('paletteSelect').value;
+  const density = parseFloat(document.getElementById('colorDensity').value);
+  const distribution = parseFloat(document.getElementById('distribution').value);
+  const balance = parseFloat(document.getElementById('balance').value);
+  const randomness = parseFloat(document.getElementById('randomness').value);
+  const minSize = parseFloat(document.getElementById('minSize').value);
+  const addBackground = document.getElementById('bgCheck').checked;
+
+  // Update displayed values
+  document.getElementById('sizeVal').innerText = size;
+  document.getElementById('marginVal').innerText = margin;
+  document.getElementById('vertVal').innerText = vertLines;
+  document.getElementById('horzVal').innerText = horzLines;
+  document.getElementById('thickVal').innerText = baseThick.toFixed(1);
+  document.getElementById('varyVal').innerText = varyThick.toFixed(1);
+  document.getElementById('densityVal').innerText = density.toFixed(2);
+  document.getElementById('distVal').innerText = distribution.toFixed(2);
+  document.getElementById('balVal').innerText = balance.toFixed(2);
+  document.getElementById('randVal').innerText = randomness.toFixed(2);
+  document.getElementById('minVal').innerText = minSize.toFixed(2);
+
+  // Get RNG
+  const rng = getRNG();
+  const palette = palettes[paletteName] || palettes.classic;
+
+  // Clear canvas
+  ctx.clearRect(0, 0, size, size);
+
+  // Draw background if checked
+  if (addBackground) {
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, size, size);
+  }
+
+  // Calculate grid lines positions with distribution/randomness influence
+  const workArea = size - 2 * margin;
+  const startX = margin;
+  const startY = margin;
+
+  // Generate line positions (simplified Mondrian algorithm)
+  let vPositions = [];
+  let hPositions = [];
+
+  // Distribution affects how evenly lines are spaced
+  for (let i = 0; i <= vertLines; i++) {
+    let t = i / vertLines;
+    // Mix between even distribution and random
+    if (distribution > 0.5) {
+      // More structured
+      t = t * (1 - randomness) + (rng() * randomness);
+    } else {
+      // More random
+      t = rng() * (1 - distribution) + t * distribution;
+    }
+    vPositions.push(startX + t * workArea);
+  }
+
+  for (let i = 0; i <= horzLines; i++) {
+    let t = i / horzLines;
+    if (distribution > 0.5) {
+      t = t * (1 - randomness) + (rng() * randomness);
+    } else {
+      t = rng() * (1 - distribution) + t * distribution;
+    }
+    hPositions.push(startY + t * workArea);
+  }
+
+  // Sort positions
+  vPositions.sort((a,b) => a-b);
+  hPositions.sort((a,b) => a-b);
+
+  // Draw rectangles first (color areas)
+  for (let i = 0; i < vPositions.length - 1; i++) {
+    for (let j = 0; j < hPositions.length - 1; j++) {
+      const x = vPositions[i];
+      const y = hPositions[j];
+      const w = vPositions[i+1] - x;
+      const h = hPositions[j+1] - y;
+
+      // Skip tiny rectangles
+      if (w < size * minSize || h < size * minSize) continue;
+
+      // Color density + balance influence
+      let colorProb = density;
+      if (balance > 0.5) {
+        // Strategic placement: prefer certain areas (simplified)
+        const posScore = (i / vPositions.length + j / hPositions.length) / 2;
+        colorProb = density * (0.5 + posScore * balance);
+      }
+
+      if (rng() < colorProb) {
+        // Choose color from palette (weighted by balance)
+        let colorIndex = Math.floor(rng() * (palette.length - 1)); // exclude white
+        ctx.fillStyle = palette[colorIndex];
+        ctx.fillRect(x, y, w, h);
+      }
+    }
+  }
+
+  // Draw grid lines (on top)
+  ctx.lineWidth = baseThick;
+  ctx.strokeStyle = '#111111';
+
+  // Vertical lines
+  vPositions.forEach(x => {
+    let thick = baseThick;
+    if (varyThick > 0) {
+      thick = baseThick * (0.8 + varyThick * rng());
+    }
+    ctx.lineWidth = thick;
+    ctx.beginPath();
+    ctx.moveTo(x, margin);
+    ctx.lineTo(x, size - margin);
+    ctx.stroke();
+  });
+
+  // Horizontal lines
+  hPositions.forEach(y => {
+    let thick = baseThick;
+    if (varyThick > 0) {
+      thick = baseThick * (0.8 + varyThick * rng());
+    }
+    ctx.lineWidth = thick;
+    ctx.beginPath();
+    ctx.moveTo(margin, y);
+    ctx.lineTo(size - margin, y);
+    ctx.stroke();
+  });
+
+  // Update stats text
+  const seedVal = document.getElementById('seedInput').value;
+  document.getElementById('canvasStats').innerHTML = 
+    `⬛ grid: ${vertLines}v × ${horzLines}h · 🎨 density: ${Math.round(density*100)}% · seed: ${seedVal === '0' ? 'random' : seedVal}`;
+}
+
+// Preset configurations
+function loadPreset(type) {
+  if (type === 'classic') {
+    document.getElementById('distribution').value = 0.8;
+    document.getElementById('balance').value = 0.8;
+    document.getElementById('randomness').value = 0.2;
+    document.getElementById('paletteSelect').value = 'classic';
+    document.getElementById('colorDensity').value = 0.4;
+    document.getElementById('vertLines').value = 5;
+    document.getElementById('horzLines').value = 5;
+  } else if (type === 'modern') {
+    document.getElementById('distribution').value = 0.6;
+    document.getElementById('balance').value = 0.5;
+    document.getElementById('randomness').value = 0.3;
+    document.getElementById('paletteSelect').value = 'modern';
+    document.getElementById('colorDensity').value = 0.5;
+    document.getElementById('vertLines').value = 6;
+    document.getElementById('horzLines').value = 4;
+  } else if (type === 'chaotic') {
+    document.getElementById('distribution').value = 0.3;
+    document.getElementById('balance').value = 0.2;
+    document.getElementById('randomness').value = 0.7;
+    document.getElementById('paletteSelect').value = 'primary';
+    document.getElementById('colorDensity').value = 0.6;
+    document.getElementById('vertLines').value = 8;
+    document.getElementById('horzLines').value = 8;
+  }
+  updatePreview();
+}
+
+function randomizeAll() {
+  // Randomize all sliders within reasonable ranges
+  document.getElementById('vertLines').value = Math.floor(Math.random() * 8) + 3;
+  document.getElementById('horzLines').value = Math.floor(Math.random() * 8) + 3;
+  document.getElementById('lineThick').value = (Math.random() * 5 + 1).toFixed(1);
+  document.getElementById('varyThick').value = (Math.random() * 0.8).toFixed(1);
+  document.getElementById('colorDensity').value = (Math.random() * 0.7 + 0.1).toFixed(2);
+  document.getElementById('distribution').value = (Math.random() * 0.8 + 0.1).toFixed(2);
+  document.getElementById('balance').value = (Math.random() * 0.8 + 0.1).toFixed(2);
+  document.getElementById('randomness').value = (Math.random() * 0.8 + 0.1).toFixed(2);
+  document.getElementById('minSize').value = (Math.random() * 0.15).toFixed(2);
+  document.getElementById('seedInput').value = Math.floor(Math.random() * 999);
+  
+  // Random palette
+  const palKeys = Object.keys(palettes);
+  document.getElementById('paletteSelect').value = palKeys[Math.floor(Math.random() * palKeys.length)];
+  
+  updatePreview();
+}
+
+// Initialize on load
+window.onload = function() {
+  updatePreview();
+};
+</script>
+</body>
+</html>
