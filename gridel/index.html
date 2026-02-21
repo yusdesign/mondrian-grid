@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Mondrian Grid · SVG generator · Library of Grids</title>
+  <style>
+    /* ultracompact · zero roundness · mobile first */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f3f2ee;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      line-height: 1.4;
+      color: #1c1c1c;
+      padding: 0.5rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 2px solid #111;
+      box-shadow: 8px 8px 0 #000;
+      padding: 1.5rem 1.2rem;
+    }
+
+    h1, h2, h3, p, pre, code, button, .tag, .param-item {
+      border-radius: 0 !important;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      border-bottom: 3px solid #111;
+      padding-bottom: 0.3rem;
+      margin-bottom: 1.2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.5rem 1rem;
+    }
+
+    .repo-link {
+      font-size: 1rem;
+      font-weight: 400;
+      background: #eee;
+      padding: 0.2rem 0.6rem;
+      border: 2px solid #222;
+      text-decoration: none;
+      color: #111;
+      transition: 0.1s ease;
+    }
+
+    .repo-link:hover {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+
+    /* INTERACTIVE PANEL - with SVG focus */
+    .interactive-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 2rem 0;
+      border: 3px solid #000;
+      padding: 1.5rem;
+      background: #faf8f4;
+    }
+
+    @media (max-width: 900px) {
+      .interactive-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .preview-area {
+      background: #fff;
+      border: 3px solid #111;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #svgPreview {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: white;
+      border-bottom: 3px solid #111;
+      padding: 0;
+      display: block;
+    }
+
+    .svg-stats {
+      padding: 0.5rem;
+      font-family: monospace;
+      font-size: 0.8rem;
+      background: #eee;
+      border-top: 2px solid #888;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .svg-output {
+      background: #111;
+      color: #0f0;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.7rem;
+      padding: 0.5rem;
+      border: 2px solid #000;
+      max-height: 100px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .controls-panel {
+      border: 3px solid #111;
+      padding: 1rem;
+      background: #fff;
+    }
+
+    .control-group {
+      margin-bottom: 1.2rem;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.8rem;
+    }
+
+    .control-group h3 {
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .slider-row label {
+      min-width: 100px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .slider-row input[type=range] {
+      flex: 1;
+      height: 4px;
+      background: #111;
+      border: 2px solid #111;
+      -webkit-appearance: none;
+    }
+
+    .slider-row input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border: 2px solid #111;
+      cursor: pointer;
+    }
+
+    .slider-row span {
+      min-width: 40px;
+      font-family: monospace;
+      font-size: 0.85rem;
+    }
+
+    .select-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .select-row select {
+      flex: 1;
+      padding: 0.3rem;
+      border: 2px solid #111;
+      background: #fff;
+      font-family: inherit;
+      border-radius: 0;
+    }
+
+    .number-input {
+      width: 70px;
+      border: 2px solid #111;
+      padding: 0.2rem;
+      font-family: monospace;
+    }
+
+    .button-primary {
+      background: #111;
+      color: #fff;
+      border: 2px solid #000;
+      padding: 0.6rem 1.2rem;
+      font-weight: 700;
+      width: 100%;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .button-primary:hover {
+      background: #fff;
+      color: #111;
+    }
+
+    .button-secondary {
+      background: #fff;
+      color: #111;
+      border: 2px solid #111;
+      padding: 0.4rem 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.85rem;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .button-secondary:hover {
+      background: #111;
+      color: #fff;
+    }
+
+    .preset-badge {
+      display: inline-block;
+      background: #eee;
+      border: 2px solid #111;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-right: 0.3rem;
+      margin-bottom: 0.3rem;
+      cursor: pointer;
+    }
+
+    .preset-badge:hover {
+      background: #111;
+      color: #fff;
+    }
+
+    .library-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+      gap: 0.5rem;
+      margin: 1rem 0;
+      border: 2px solid #111;
+      padding: 1rem;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .library-item {
+      aspect-ratio: 1;
+      border: 2px solid #111;
+      cursor: pointer;
+      transition: 0.1s ease;
+    }
+
+    .library-item:hover {
+      transform: scale(1.05);
+      box-shadow: 2px 2px 0 #000;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 0.8rem;
+      margin: 2rem 0 1.5rem;
+    }
+
+    .feature-item {
+      background: #fff;
+      border: 2px solid #000;
+      padding: 0.75rem 0.6rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-align: center;
+      box-shadow: 3px 3px 0 #888;
+    }
+
+    .install-steps {
+      background: #f0ede8;
+      border: 2px solid #111;
+      padding: 1.2rem;
+      margin: 1.8rem 0;
+    }
+
+    pre {
+      background: #111;
+      color: #ddd;
+      padding: 0.7rem 1rem;
+      border: 2px solid #000;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0.6rem 0;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 1.8rem;
+      margin-top: 1rem;
+      border-top: 2px solid #111;
+      padding-top: 1.2rem;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 0.2rem; }
+      .container { padding: 1rem 0.8rem; box-shadow: 4px 4px 0 #000; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>
+    ⬛ Mondrian Grid · SVG Generator
+    <a href="https://github.com/yusdesign/mondrian-grid" class="repo-link" target="_blank" rel="noopener">github/yusdesign</a>
+  </h1>
+
+  <!-- INTERACTIVE PANEL with SVG output -->
+  <div class="interactive-panel">
+    <!-- Left: SVG preview and code -->
+    <div class="preview-area">
+      <div id="svgPreview"></div>
+      <div class="svg-stats">
+        <span id="svgStats">⬛ grid: 5v × 5h · 24 elements</span>
+        <div>
+          <button class="button-secondary" onclick="copySVG()">📋 COPY SVG</button>
+          <button class="button-secondary" onclick="downloadSVG()">⬇️ DOWNLOAD</button>
+        </div>
+      </div>
+      <div class="svg-output" id="svgOutput">&lt;svg&gt;...&lt;/svg&gt;</div>
+    </div>
+
+    <!-- Right: Controls -->
+    <div class="controls-panel">
+      <div style="display: flex; gap: 0.3rem; margin-bottom: 1rem; flex-wrap: wrap;">
+        <span class="preset-badge" onclick="loadPreset('classic')">CLASSIC</span>
+        <span class="preset-badge" onclick="loadPreset('modern')">MODERN</span>
+        <span class="preset-badge" onclick="loadPreset('chaotic')">CHAOTIC</span>
+        <span class="preset-badge" onclick="loadPreset('icon')">ICON (32x32)</span>
+        <span class="preset-badge" onclick="randomizeAll()">🎲 RANDOM</span>
+        <span class="preset-badge" onclick="addToLibrary()">📚 + TO LIBRARY</span>
+      </div>
+
+      <!-- Canvas settings -->
+      <div class="control-group">
+        <h3>📐 SIZE</h3>
+        <div class="slider-row">
+          <label>SVG size</label>
+          <input type="range" id="canvasSize" min="16" max="512" value="200" step="8" oninput="updateSVG()">
+          <span id="sizeVal">200</span>
+        </div>
+        <div class="slider-row">
+          <label>Viewbox margin</label>
+          <input type="range" id="marginSize" min="0" max="20" value="4" step="1" oninput="updateSVG()">
+          <span id="marginVal">4</span>
+        </div>
+      </div>
+
+      <!-- Grid settings -->
+      <div class="control-group">
+        <h3>▬ GRID</h3>
+        <div class="slider-row">
+          <label>Vertical lines</label>
+          <input type="range" id="vertLines" min="1" max="12" value="5" step="1" oninput="updateSVG()">
+          <span id="vertVal">5</span>
+        </div>
+        <div class="slider-row">
+          <label>Horizontal lines</label>
+          <input type="range" id="horzLines" min="1" max="12" value="5" step="1" oninput="updateSVG()">
+          <span id="horzVal">5</span>
+        </div>
+        <div class="slider-row">
+          <label>Line thickness</label>
+          <input type="range" id="lineThick" min="0.5" max="8" value="2" step="0.5" oninput="updateSVG()">
+          <span id="thickVal">2.0</span>
+        </div>
+      </div>
+
+      <!-- Color settings -->
+      <div class="control-group">
+        <h3>🎨 COLOR</h3>
+        <div class="select-row">
+          <label>Palette</label>
+          <select id="paletteSelect" onchange="updateSVG()">
+            <option value="classic">Classic (red/blue/yellow)</option>
+            <option value="modern" selected>Modern (teal/orange/purple)</option>
+            <option value="grayscale">Grayscale</option>
+            <option value="primary">Primary (bold primaries)</option>
+            <option value="pastel">Pastel</option>
+            <option value="monochrome">Monochrome black</option>
+          </select>
+        </div>
+        <div class="slider-row">
+          <label>Color density</label>
+          <input type="range" id="colorDensity" min="0" max="1" value="0.4" step="0.05" oninput="updateSVG()">
+          <span id="densityVal">0.40</span>
+        </div>
+      </div>
+
+      <!-- Composition -->
+      <div class="control-group">
+        <h3>⚙️ COMPOSITION</h3>
+        <div class="slider-row">
+          <label>Distribution</label>
+          <input type="range" id="distribution" min="0" max="1" value="0.7" step="0.05" oninput="updateSVG()">
+          <span id="distVal">0.70</span>
+        </div>
+        <div class="slider-row">
+          <label>Balance</label>
+          <input type="range" id="balance" min="0" max="1" value="0.6" step="0.05" oninput="updateSVG()">
+          <span id="balVal">0.60</span>
+        </div>
+        <div class="slider-row">
+          <label>Randomness</label>
+          <input type="range" id="randomness" min="0" max="1" value="0.3" step="0.05" oninput="updateSVG()">
+          <span id="randVal">0.30</span>
+        </div>
+      </div>
+
+      <!-- Advanced -->
+      <div class="control-group">
+        <h3>🧩 ADVANCED</h3>
+        <div class="slider-row">
+          <label>Random seed</label>
+          <input type="number" id="seedInput" class="number-input" value="42" min="0" max="9999" onchange="updateSVG()">
+        </div>
+        <div style="display: flex; gap: 1rem; margin-top: 0.5rem; flex-wrap: wrap;">
+          <label style="display: flex; align-items: center; gap: 0.2rem;">
+            <input type="checkbox" id="bgCheck" checked onchange="updateSVG()"> white bg
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.2rem;">
+            <input type="checkbox" id="optimizeCheck" checked onchange="updateSVG()"> optimize paths
+          </label>
+        </div>
+      </div>
+
+      <button class="button-primary" onclick="randomizeAll()">🎲 GENERATE NEW GRID</button>
+    </div>
+  </div>
+
+  <!-- MONDRIAN'S LIBRARY OF GRIDS -->
+  <div style="margin: 2rem 0 1rem;">
+    <h2 style="font-size: 1.6rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+      <span>📚 Mondrian's Library of Grids</span>
+      <button class="button-secondary" onclick="clearLibrary()">clear all</button>
+    </h2>
+    <div class="library-grid" id="libraryGrid">
+      <!-- Library items will be dynamically added here -->
+    </div>
+  </div>
+
+  <!-- FEATURE SNAPSHOT -->
+  <div class="feature-grid">
+    <div class="feature-item">🎨 6 palettes</div>
+    <div class="feature-item">⚖️ balance slider</div>
+    <div class="feature-item">📐 distribution</div>
+    <div class="feature-item">🔄 random seed</div>
+    <div class="feature-item">▦ variable lines</div>
+    <div class="feature-item">📚 grid library</div>
+  </div>
+
+  <!-- QUOTE -->
+  <p style="font-size: 1.1rem; border-left: 6px solid #111; padding-left: 1rem; margin: 1.2rem 0;">
+    <em>“The position of the artist is humble. He is essentially a channel.”</em> — Piet Mondrian
+  </p>
+
+  <!-- INSTALL SECTION -->
+  <div class="install-steps">
+    <h2 style="font-size: 1.6rem; margin-bottom: 0.8rem;">⬇️ quick install</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 1.2rem;">
+      <div style="flex: 2; min-width: 200px;">
+        <p><strong>📦 method 1: direct download</strong><br>
+        <code>mondrian-grid.zip</code> – copy two files:</p>
+        <pre>mondriangrid_v3.inx  &  mondriangrid_v3.py</pre>
+        <p>📍 to Inkscape extensions folder:</p>
+        <ul style="list-style-type: none; padding-left: 0.2rem;">
+          <li>🪟 <code>%APPDATA%\inkscape\extensions\</code></li>
+          <li>🐧 <code>~/.config/inkscape/extensions/</code></li>
+          <li>🍏 <code>~/Library/Application Support/inkscape/extensions/</code></li>
+        </ul>
+      </div>
+      <div style="flex: 1.2;">
+        <p><strong>🧪 method 2: source</strong></p>
+        <pre>git clone https://github.com/yusdesign/mondrian-grid.git
+cd mondrian-grid/extension
+cp mondriangrid_v3.* ~/.config/inkscape/extensions/</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer-links">
+    <a href="#" class="button-secondary">🐛 GitHub Issues</a>
+    <a href="#" class="button-secondary">💬 Discussions</a>
+    <span class="button-secondary">📧 Inkscape Forum</span>
+    <span style="margin-left: auto; font-size: 0.9rem;">⚫ roundness = 0</span>
+  </div>
+</div>
+
+<script>
+// ==================== MONDRIAN SVG GENERATOR ====================
+// Produces clean, minimal SVG path strings
+
+let library = []; // Stores generated SVGs
+
+// Color palettes (hex values)
+const palettes = {
+  classic: ['#D12E2E', '#2E4A7A', '#E3B23C'],
+  modern: ['#2E5E4E', '#C44545', '#4A6FA5'],
+  grayscale: ['#222222', '#555555', '#888888'],
+  primary: ['#FF4136', '#0074D9', '#FFDC00'],
+  pastel: ['#FFB3BA', '#BAE1FF', '#C4E3CB'],
+  monochrome: ['#000000', '#000000', '#000000']
+};
+
+// Get RNG based on seed
+function getRNG() {
+  let seed = parseInt(document.getElementById('seedInput').value) || 0;
+  if (seed === 0) {
+    return Math.random;
+  } else {
+    let seedVal = seed;
+    return () => {
+      seedVal = (seedVal * 9301 + 49297) % 233280;
+      return seedVal / 233280;
+    };
+  }
+}
+
+// Main SVG generation function
+function generateSVG() {
+  const size = parseInt(document.getElementById('canvasSize').value);
+  const margin = parseInt(document.getElementById('marginSize').value);
+  const vertLines = parseInt(document.getElementById('vertLines').value);
+  const horzLines = parseInt(document.getElementById('horzLines').value);
+  const baseThick = parseFloat(document.getElementById('lineThick').value);
+  const paletteName = document.getElementById('paletteSelect').value;
+  const density = parseFloat(document.getElementById('colorDensity').value);
+  const distribution = parseFloat(document.getElementById('distribution').value);
+  const balance = parseFloat(document.getElementById('balance').value);
+  const randomness = parseFloat(document.getElementById('randomness').value);
+  const addBackground = document.getElementById('bgCheck').checked;
+  const optimize = document.getElementById('optimizeCheck').checked;
+
+  const rng = getRNG();
+  const palette = palettes[paletteName] || palettes.modern;
+
+  // Calculate grid lines
+  const workArea = size - 2 * margin;
+  const startX = margin;
+  const startY = margin;
+
+  let vPositions = [];
+  let hPositions = [];
+
+  // Generate line positions with distribution/randomness
+  for (let i = 0; i <= vertLines; i++) {
+    let t = i / vertLines;
+    t = t * (1 - randomness * 0.7) + (rng() * randomness * 0.7);
+    vPositions.push(Math.round(startX + t * workArea));
+  }
+
+  for (let i = 0; i <= horzLines; i++) {
+    let t = i / horzLines;
+    t = t * (1 - randomness * 0.7) + (rng() * randomness * 0.7);
+    hPositions.push(Math.round(startY + t * workArea));
+  }
+
+  // Sort and deduplicate
+  vPositions = [...new Set(vPositions.sort((a,b) => a-b))];
+  hPositions = [...new Set(hPositions.sort((a,b) => a-b))];
+
+  // Build SVG parts
+  let paths = [];
+  let elements = 0;
+
+  // Background rectangle
+  if (addBackground) {
+    paths.push(`<rect width="${size}" height="${size}" fill="white"/>`);
+    elements++;
+  }
+
+  // Colored rectangles
+  for (let i = 0; i < vPositions.length - 1; i++) {
+    for (let j = 0; j < hPositions.length - 1; j++) {
+      const x = vPositions[i];
+      const y = hPositions[j];
+      const w = vPositions[i+1] - x;
+      const h = hPositions[j+1] - y;
+
+      // Skip if rectangle is too small (less than 2px)
+      if (w < 2 || h < 2) continue;
+
+      // Color probability with balance influence
+      let colorProb = density;
+      if (balance > 0.5) {
+        const posScore = (i / vPositions.length + j / hPositions.length) / 2;
+        colorProb = density * (0.7 + posScore * balance * 0.6);
+      }
+
+      if (rng() < colorProb) {
+        const colorIndex = Math.floor(rng() * palette.length);
+        paths.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${palette[colorIndex]}"/>`);
+        elements++;
+      }
+    }
+  }
+
+  // Grid lines (paths for clean rendering)
+  const lineColor = '#111111';
+  
+  // Vertical lines
+  vPositions.forEach(x => {
+    if (x > margin && x < size - margin) {
+      paths.push(`<path d="M${x},${margin} L${x},${size-margin}" stroke="${lineColor}" stroke-width="${baseThick}"/>`);
+      elements++;
+    }
+  });
+
+  // Horizontal lines
+  hPositions.forEach(y => {
+    if (y > margin && y < size - margin) {
+      paths.push(`<path d="M${margin},${y} L${size-margin},${y}" stroke="${lineColor}" stroke-width="${baseThick}"/>`);
+      elements++;
+    }
+  });
+
+  // Optional: optimize by combining paths? (keeping simple for now)
+
+  // Build final SVG
+  const svgContent = paths.join('\n  ');
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">\n  ${svgContent}\n</svg>`;
+
+  return { svg, elements, vCount: vPositions.length-1, hCount: hPositions.length-1 };
+}
+
+// Update preview and output
+function updateSVG() {
+  const { svg, elements, vCount, hCount } = generateSVG();
+  
+  // Update preview
+  document.getElementById('svgPreview').innerHTML = svg;
+  
+  // Update stats
+  document.getElementById('svgStats').innerHTML = 
+    `⬛ grid: ${vCount}v × ${hCount}h · ${elements} elements · seed: ${document.getElementById('seedInput').value}`;
+  
+  // Update code output (truncated for display)
+  const displaySvg = svg.length > 200 ? svg.substring(0, 200) + '…' : svg;
+  document.getElementById('svgOutput').textContent = displaySvg;
+
+  // Update all value displays
+  document.getElementById('sizeVal').innerText = document.getElementById('canvasSize').value;
+  document.getElementById('marginVal').innerText = document.getElementById('marginSize').value;
+  document.getElementById('vertVal').innerText = document.getElementById('vertLines').value;
+  document.getElementById('horzVal').innerText = document.getElementById('horzLines').value;
+  document.getElementById('thickVal').innerText = parseFloat(document.getElementById('lineThick').value).toFixed(1);
+  document.getElementById('densityVal').innerText = parseFloat(document.getElementById('colorDensity').value).toFixed(2);
+  document.getElementById('distVal').innerText = parseFloat(document.getElementById('distribution').value).toFixed(2);
+  document.getElementById('balVal').innerText = parseFloat(document.getElementById('balance').value).toFixed(2);
+  document.getElementById('randVal').innerText = parseFloat(document.getElementById('randomness').value).toFixed(2);
+}
+
+// Copy SVG to clipboard
+function copySVG() {
+  const { svg } = generateSVG();
+  navigator.clipboard.writeText(svg).then(() => {
+    alert('SVG copied to clipboard!');
+  });
+}
+
+// Download SVG file
+function downloadSVG() {
+  const { svg } = generateSVG();
+  const blob = new Blob([svg], { type: 'image/svg+xml' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `mondrian-${Date.now()}.svg`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Add current grid to library
+function addToLibrary() {
+  const { svg } = generateSVG();
+  library.push(svg);
+  updateLibraryDisplay();
+}
+
+// Update library grid display
+function updateLibraryDisplay() {
+  const grid = document.getElementById('libraryGrid');
+  grid.innerHTML = '';
+  
+  library.forEach((svg, index) => {
+    const item = document.createElement('div');
+    item.className = 'library-item';
+    item.innerHTML = svg;
+    item.onclick = () => {
+      // Load this SVG back into preview
+      document.getElementById('svgPreview').innerHTML = svg;
+    };
+    grid.appendChild(item);
+  });
+  
+  if (library.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:1rem; color:#888;">⬜ add grids to your library</div>';
+  }
+}
+
+// Clear library
+function clearLibrary() {
+  library = [];
+  updateLibraryDisplay();
+}
+
+// Preset configurations
+function loadPreset(type) {
+  if (type === 'classic') {
+    document.getElementById('distribution').value = 0.8;
+    document.getElementById('balance').value = 0.8;
+    document.getElementById('randomness').value = 0.2;
+    document.getElementById('paletteSelect').value = 'classic';
+    document.getElementById('colorDensity').value = 0.4;
+    document.getElementById('vertLines').value = 5;
+    document.getElementById('horzLines').value = 5;
+    document.getElementById('canvasSize').value = 200;
+  } else if (type === 'modern') {
+    document.getElementById('distribution').value = 0.6;
+    document.getElementById('balance').value = 0.5;
+    document.getElementById('randomness').value = 0.3;
+    document.getElementById('paletteSelect').value = 'modern';
+    document.getElementById('colorDensity').value = 0.5;
+    document.getElementById('vertLines').value = 6;
+    document.getElementById('horzLines').value = 4;
+    document.getElementById('canvasSize').value = 200;
+  } else if (type === 'chaotic') {
+    document.getElementById('distribution').value = 0.3;
+    document.getElementById('balance').value = 0.2;
+    document.getElementById('randomness').value = 0.8;
+    document.getElementById('paletteSelect').value = 'primary';
+    document.getElementById('colorDensity').value = 0.6;
+    document.getElementById('vertLines').value = 8;
+    document.getElementById('horzLines').value = 8;
+    document.getElementById('canvasSize').value = 200;
+  } else if (type === 'icon') {
+    document.getElementById('canvasSize').value = 32;
+    document.getElementById('marginSize').value = 2;
+    document.getElementById('vertLines').value = 3;
+    document.getElementById('horzLines').value = 3;
+    document.getElementById('lineThick').value = 1;
+    document.getElementById('colorDensity').value = 0.5;
+    document.getElementById('distribution').value = 0.5;
+    document.getElementById('balance').value = 0.5;
+    document.getElementById('randomness').value = 0.3;
+  }
+  updateSVG();
+}
+
+function randomizeAll() {
+  document.getElementById('vertLines').value = Math.floor(Math.random() * 8) + 2;
+  document.getElementById('horzLines').value = Math.floor(Math.random() * 8) + 2;
+  document.getElementById('lineThick').value = (Math.random() * 4 + 1).toFixed(1);
+  document.getElementById('colorDensity').value = (Math.random() * 0.7 + 0.1).toFixed(2);
+  document.getElementById('distribution').value = (Math.random() * 0.8 + 0.1).toFixed(2);
+  document.getElementById('balance').value = (Math.random() * 0.8 + 0.1).toFixed(2);
+  document.getElementById('randomness').value = (Math.random() * 0.8 + 0.1).toFixed(2);
+  
+  const palKeys = Object.keys(palettes);
+  document.getElementById('paletteSelect').value = palKeys[Math.floor(Math.random() * palKeys.length)];
+  
+  document.getElementById('seedInput').value = Math.floor(Math.random() * 999);
+  updateSVG();
+}
+
+// Initialize
+window.onload = function() {
+  updateSVG();
+  // Add some example grids to library
+  setTimeout(() => {
+    for (let i = 0; i < 6; i++) {
+      document.getElementById('seedInput').value = i * 100 + 42;
+      addToLibrary();
+    }
+    document.getElementById('seedInput').value = 42;
+    updateSVG();
+  }, 100);
+};
+</script>
+</body>
+</html>
