@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Mondrian Grid · Inkscape extension</title>
+  <style>
+    /* ultracompact · zero roundness · mobile first */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f3f2ee;  /* subtle paper */
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      line-height: 1.4;
+      color: #1c1c1c;
+      padding: 0.5rem;       /* micro breathing */
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* main card – absolutely square edges */
+    .container {
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 2px solid #111;
+      box-shadow: 8px 8px 0 #000;   /* mondrian accent */
+      padding: 1.5rem 1.2rem;
+    }
+
+    /* typography – no roundness anywhere */
+    h1, h2, h3, p, pre, code, button, .tag, .param-item {
+      border-radius: 0 !important;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      border-bottom: 3px solid #111;
+      padding-bottom: 0.3rem;
+      margin-bottom: 1.2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.5rem 1rem;
+    }
+
+    .repo-link {
+      font-size: 1rem;
+      font-weight: 400;
+      background: #eee;
+      padding: 0.2rem 0.6rem;
+      border: 2px solid #222;
+      text-decoration: none;
+      color: #111;
+      transition: 0.1s ease;
+    }
+
+    .repo-link:hover {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 0.8rem;
+      margin: 2rem 0 1.5rem;
+    }
+
+    .feature-item {
+      background: #fff;
+      border: 2px solid #000;
+      padding: 0.75rem 0.6rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-align: center;
+      box-shadow: 3px 3px 0 #888;
+    }
+
+    /* compact palette indicator */
+    .palette-marker {
+      display: inline-block;
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid black;
+      margin-right: 0.3rem;
+      vertical-align: middle;
+    }
+
+    /* parameter tables – ultra dense */
+    .param-section {
+      margin: 2rem 0 2.2rem;
+      border-top: 2px solid #111;
+      padding-top: 1.2rem;
+    }
+
+    .param-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .param-card {
+      border: 2px solid #222;
+      padding: 0.8rem 0.8rem 0.6rem;
+      background: #fafaf8;
+    }
+
+    .param-name {
+      font-weight: 800;
+      font-size: 1.1rem;
+      display: block;
+      border-bottom: 2px solid #aaa;
+      margin-bottom: 0.3rem;
+    }
+
+    .param-desc {
+      font-size: 0.9rem;
+      color: #2b2b2b;
+    }
+
+    .install-steps {
+      background: #f0ede8;
+      border: 2px solid #111;
+      padding: 1.2rem;
+      margin: 1.8rem 0;
+    }
+
+    pre {
+      background: #111;
+      color: #ddd;
+      padding: 0.7rem 1rem;
+      border: 2px solid #000;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0.6rem 0;
+    }
+
+    code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      background: #eaeaea;
+      border: 2px solid #777;
+      padding: 0.1rem 0.3rem;
+      font-size: 0.85rem;
+    }
+
+    .button, button {
+      background: #fff;
+      border: 2px solid #111;
+      padding: 0.5rem 1rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: default;
+      box-shadow: 2px 2px 0 #333;
+      transition: 0.05s linear;
+      text-decoration: none;
+      color: #111;
+      display: inline-block;
+      border-radius: 0;         /* explicit zero */
+    }
+
+    .button:hover {
+      background: #111;
+      color: #fff;
+      box-shadow: none;
+      transform: translate(2px, 2px);
+    }
+
+    hr {
+      border: none;
+      border-top: 3px solid #111;
+      margin: 1.8rem 0;
+    }
+
+    /* screenshots / mock examples */
+    .example-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .example-card {
+      flex: 1 1 180px;
+      border: 2px solid black;
+      aspect-ratio: 1 / 1;
+      background: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0.6rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      background-size: cover;
+      background-position: center;
+      background-blend-mode: multiply;
+    }
+
+    .classic-ex { background: #f9eec1 radial-gradient(circle at 30% 40%, #d02b2b 15%, transparent 16%), repeating-linear-gradient(45deg, #222 0px, #222 4px, #f9eec1 4px, #f9eec1 10px); }
+    .modern-ex { background: #dde5ed linear-gradient(217deg, #e63946 0%, #1e6091 80%); }
+    .chaos-ex { background: #e6d7b8 repeating-linear-gradient(45deg, #222 0px, #222 2px, #e6d7b8 2px, #e6d7b8 10px), linear-gradient(135deg, #ffcc66 20%, #99cc99 80%); }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 1.8rem;
+      margin-top: 1rem;
+      border-top: 2px solid #111;
+      padding-top: 1.2rem;
+    }
+
+    /* mobile single column fine-tuning */
+    @media (max-width: 600px) {
+      body { padding: 0.2rem; }
+      .container { padding: 1rem 0.8rem; box-shadow: 4px 4px 0 #000; }
+      h1 { font-size: 1.8rem; }
+      .feature-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* small screen scrolling always possible */
+    .scrollable-touch {
+      -webkit-overflow-scrolling: touch;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>
+    ⬛ Mondrian Grid · Inkscape
+    <a href="https://github.com/yusdesign/mondrian-grid" class="repo-link" target="_blank" rel="noopener">github/yusdesign</a>
+  </h1>
+
+  <!-- FEATURE SNAPSHOT (ultracompact tiles) -->
+  <div class="feature-grid">
+    <div class="feature-item">🎨 5 palettes</div>
+    <div class="feature-item">⚖️ balance slider</div>
+    <div class="feature-item">📐 distribution</div>
+    <div class="feature-item">🔄 random seed</div>
+    <div class="feature-item">▦ variable lines</div>
+    <div class="feature-item">⬜ background opt</div>
+  </div>
+
+  <!-- QUOTE / TAGLINE (straight edges) -->
+  <p style="font-size: 1.1rem; border-left: 6px solid #111; padding-left: 1rem; margin: 1.2rem 0;">
+    <em>“The position of the artist is humble. He is essentially a channel.”</em> — Piet Mondrian
+  </p>
+
+  <!-- INSTALL SECTION (compact) -->
+  <div class="install-steps">
+    <h2 style="font-size: 1.6rem; margin-bottom: 0.8rem;">⬇️ quick install</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 1.2rem;">
+      <div style="flex: 2; min-width: 200px;">
+        <p><strong>📦 method 1: direct download</strong><br>
+        <code>mondrian-grid.zip</code> – copy two files:</p>
+        <pre>mondriangrid_v3.inx  &  mondriangrid_v3.py</pre>
+        <p>📍 to Inkscape extensions folder:</p>
+        <ul style="list-style-type: none; padding-left: 0.2rem;">
+          <li>🪟 <code>%APPDATA%\inkscape\extensions\</code></li>
+          <li>🐧 <code>~/.config/inkscape/extensions/</code></li>
+          <li>🍏 <code>~/Library/Application Support/inkscape/extensions/</code></li>
+        </ul>
+      </div>
+      <div style="flex: 1.2;">
+        <p><strong>🧪 method 2: source</strong></p>
+        <pre>git clone https://github.com/yusdesign/mondrian-grid.git
+cd mondrian-grid/extension
+cp mondriangrid_v3.* ~/.config/inkscape/extensions/</pre>
+        <p class="button" style="display: inline-block; margin-top: 0.3rem;">restart Inkscape</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARAMETERS (detailed but dense) -->
+  <div class="param-section">
+    <h2 style="font-size: 1.8rem;">🎛️ parameters — zero roundness</h2>
+    <div class="param-grid">
+      <div class="param-card"><span class="param-name">📐 canvas</span><span class="param-desc">Width / Height · margin · background layer</span></div>
+      <div class="param-card"><span class="param-name">▬ grid</span><span class="param-desc">Vertical/horizontal lines · thickness · edge margin</span></div>
+      <div class="param-card"><span class="param-name">🎨 color</span><span class="param-desc">Palette (classic, modern, grayscale, primary, pastel) · density %</span></div>
+      <div class="param-card"><span class="param-name">⚙️ composition</span><span class="param-desc">Distribution 0–1 · Balance 0–1 · Randomness slider</span></div>
+      <div class="param-card"><span class="param-name">🧩 advanced</span><span class="param-desc">Random seed · min rectangle size · grouping · vary thickness</span></div>
+    </div>
+  </div>
+
+  <!-- PALETTES quick view -->
+  <div style="margin: 1rem 0 1.8rem;">
+    <h3 style="font-weight: 700; margin-bottom: 0.3rem;">🎨 color palettes</h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; border: 2px solid black; padding: 0.8rem;">
+      <span><span class="palette-marker" style="background: #d12e2e;"></span> classic (red, blue, yellow)</span>
+      <span><span class="palette-marker" style="background: #4a6fa5;"></span> modern</span>
+      <span><span class="palette-marker" style="background: #555;"></span> grayscale</span>
+      <span><span class="palette-marker" style="background: #e67e22;"></span> primary</span>
+      <span><span class="palette-marker" style="background: #b5c8b5;"></span> pastel</span>
+    </div>
+  </div>
+
+  <!-- EXAMPLE SETTINGS (cards with background texture) -->
+  <h2 style="font-size: 1.6rem;">🖼️ example compositions</h2>
+  <div class="example-row">
+    <div class="example-card classic-ex"><span>⚪ classic<br>dist 0.8 · bal 0.8</span></div>
+    <div class="example-card modern-ex"><span>🔷 modern<br>dist 0.6 · bal 0.5</span></div>
+    <div class="example-card chaos-ex"><span>🌀 chaotic<br>dist 0.3 · bal 0.2 · rand 0.3</span></div>
+  </div>
+
+  <!-- DEVELOPMENT / CONTRIBUTE BLOCK -->
+  <hr>
+  <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between;">
+    <div>
+      <h3 style="font-weight: 800;">🛠️ development</h3>
+      <pre style="background: #eee; color: #111; border-color: black;">extension/
+├── mondriangrid_v3.py
+├── mondriangrid_v3.inx
+└── icon.svg (opt)</pre>
+      <p>Inkscape 1.0+ · Python 3.6+ · inkex bundled</p>
+    </div>
+    <div>
+      <h3 style="font-weight: 800;">🤝 contribute</h3>
+      <ul style="list-style-type: square; padding-left: 1.5rem;">
+        <li>fork / feature branch</li>
+        <li>new palettes / algorithms</li>
+        <li>preview or presets</li>
+        <li>performance</li>
+      </ul>
+      <p><span class="button">pull request →</span></p>
+    </div>
+    <div>
+      <h3 style="font-weight: 800;">📄 license</h3>
+      <p>MIT · 2026</p>
+    </div>
+  </div>
+
+  <!-- SUPPORT & FOOTER (straight corners everywhere) -->
+  <div class="footer-links">
+    <a href="#" class="button" style="text-decoration: none;">🐛 GitHub Issues</a>
+    <a href="#" class="button" style="text-decoration: none;">💬 Discussions</a>
+    <span class="button">📧 Inkscape Forum</span>
+    <span style="margin-left: auto; font-size: 0.9rem; align-self: center;">☕ buy us a coffee?</span>
+  </div>
+
+  <!-- tiny ultracompact badge : zero roundness preserved -->
+  <div style="margin-top: 1rem; text-align: right; border-top: 2px solid #111; padding-top: 0.5rem; font-size: 0.75rem; display: flex; justify-content: space-between;">
+    <span>mondrian grid v3 · all button roundness = 0</span>
+    <span>📱 mobile scroll → OK</span>
+  </div>
+</div>
+<!-- end container -->
+</body>
+</html>
