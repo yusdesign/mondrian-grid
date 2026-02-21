@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Mondrian Grid · mobile lite</title>
+  <style>
+    /* ultracompact, zero roundness, mobile-only comfort */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #e8e5da;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+      line-height: 1.3;
+      color: #111;
+      padding: 0.3rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 2px solid #111;
+      box-shadow: 5px 5px 0 #000;
+      padding: 0.8rem 0.8rem 0.5rem;
+    }
+
+    /* zero roundness enforcement */
+    h1, h2, h3, p, button, .card, .badge, input, select {
+      border-radius: 0 !important;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      border-bottom: 3px solid #111;
+      padding-bottom: 0.2rem;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.3rem 0.6rem;
+    }
+
+    .repo-micro {
+      font-size: 0.7rem;
+      font-weight: 400;
+      background: #eee;
+      border: 2px solid #222;
+      padding: 0.2rem 0.5rem;
+      text-decoration: none;
+      color: #111;
+    }
+
+    /* generator strip – minimal */
+    .gen-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-bottom: 0.8rem;
+      background: #f3f0ea;
+      border: 2px solid #111;
+      padding: 0.4rem;
+    }
+
+    .gen-btn {
+      background: #fff;
+      border: 2px solid #111;
+      padding: 0.3rem 0.5rem;
+      font-weight: 600;
+      font-size: 0.7rem;
+      box-shadow: 1px 1px 0 #333;
+      cursor: pointer;
+      flex: 1 0 auto;
+    }
+
+    .gen-btn:active {
+      background: #111;
+      color: #fff;
+      transform: translate(1px, 1px);
+      box-shadow: none;
+    }
+
+    /* preview row – compact */
+    .preview-row {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+      align-items: center;
+      border: 2px solid #111;
+      padding: 0.5rem;
+      background: #faf8f4;
+    }
+
+    #previewBox {
+      width: 80px;
+      height: 80px;
+      border: 2px solid #111;
+      background: white;
+      flex-shrink: 0;
+    }
+
+    .preview-meta {
+      font-size: 0.7rem;
+      line-height: 1.2;
+      font-family: monospace;
+      word-break: break-word;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 0.3rem;
+      margin-top: 0.2rem;
+    }
+
+    .micro-btn {
+      background: #fff;
+      border: 2px solid #111;
+      padding: 0.2rem 0.4rem;
+      font-size: 0.65rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* LIBRARY SECTION – takes half the page or more */
+    .library-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-top: 3px solid #111;
+      margin-top: 1rem;
+      padding-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .library-header h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .badge {
+      background: #111;
+      color: white;
+      border: 2px solid #111;
+      padding: 0.1rem 0.5rem;
+      font-size: 0.6rem;
+      font-weight: 600;
+    }
+
+    /* grid of cards – 48x48 previews + name */
+    .library-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      max-height: 60vh;
+      overflow-y: auto;
+      padding: 0.2rem 0.1rem;
+      border: 2px solid #111;
+      background: #f0ede8;
+    }
+
+    .library-card {
+      background: #fff;
+      border: 2px solid #111;
+      padding: 0.5rem 0.3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      cursor: pointer;
+      transition: 0.05s linear;
+    }
+
+    .library-card:active {
+      background: #ddd;
+      transform: translate(1px, 1px);
+    }
+
+    .card-preview {
+      width: 48px;
+      height: 48px;
+      border: 2px solid #111;
+      background: white;
+    }
+
+    .card-name {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-align: center;
+      word-break: break-word;
+      max-width: 100%;
+      border-top: 1px solid #aaa;
+      padding-top: 0.2rem;
+      width: 100%;
+    }
+
+    /* minimal footer only badges */
+    .footer-badges {
+      margin-top: 1rem;
+      border-top: 2px solid #111;
+      padding: 0.5rem 0 0.2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem 0.6rem;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-weight: 600;
+    }
+
+    .footer-badge {
+      background: #fff;
+      border: 2px solid #111;
+      padding: 0.1rem 0.5rem;
+      white-space: nowrap;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>
+    ⬛ MONDRIAN/m
+    <a href="https://github.com/yusdesign/mondrian-grid" class="repo-micro" target="_blank">github</a>
+  </h1>
+
+  <!-- minimal generator bar (no install section) -->
+  <div class="gen-bar">
+    <button class="gen-btn" onclick="quickPreset('classic')">CLASSIC</button>
+    <button class="gen-btn" onclick="quickPreset('modern')">MODERN</button>
+    <button class="gen-btn" onclick="quickPreset('chaotic')">CHAOTIC</button>
+    <button class="gen-btn" onclick="randomizeAndPreview()">🎲 RAND</button>
+    <button class="gen-btn" onclick="addCurrentToLibrary()">➕ ADD</button>
+  </div>
+
+  <!-- live preview small row -->
+  <div class="preview-row">
+    <div id="previewBox">
+      <svg id="previewSvg" width="80" height="80" viewBox="0 0 200 200"></svg>
+    </div>
+    <div class="preview-meta">
+      <span id="previewName">modern_teal</span><br>
+      <span id="previewDetails">5v x 5h · 0.4 dens</span>
+      <div class="action-row">
+        <button class="micro-btn" onclick="copyCurrentSVG()">📋 copy</button>
+        <button class="micro-btn" onclick="downloadCurrentSVG()">⬇️ svg</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIBRARY (main area) – no clear button, just header with count -->
+  <div class="library-header">
+    <h2>📚 GRID LIBRARY</h2>
+    <span class="badge" id="libCount">6 grids</span>
+  </div>
+  <div class="library-grid" id="libraryContainer">
+    <!-- cards injected via js -->
+  </div>
+
+  <!-- minimal footer: only badges (inkscape, mit, zero round) -->
+  <div class="footer-badges">
+    <span class="footer-badge">🖌️ inkscape 1.4+</span>
+    <span class="footer-badge">⚫ roundness=0</span>
+    <span class="footer-badge">📄 MIT</span>
+    <span class="footer-badge">📱 mobile lite</span>
+  </div>
+</div>
+
+<script>
+  // ---------- SIMPLE DATABASE OF GRIDS (name + parameters) ----------
+  const gridDB = [
+    { name: 'classic_red',   palette: 'classic', vert:4, horz:4, thick:2, density:0.5, dist:0.8, bal:0.7, rand:0.2, seed:101 },
+    { name: 'modern_teal',   palette: 'modern', vert:5, horz:5, thick:2, density:0.4, dist:0.7, bal:0.6, rand:0.3, seed:42 },
+    { name: 'primary_bold',  palette: 'primary', vert:6, horz:3, thick:3, density:0.6, dist:0.5, bal:0.5, rand:0.4, seed:77 },
+    { name: 'pastel_soft',   palette: 'pastel', vert:4, horz:5, thick:1.5, density:0.7, dist:0.4, bal:0.3, rand:0.5, seed:202 },
+    { name: 'grayscale',     palette: 'grayscale', vert:5, horz:6, thick:2, density:0.5, dist:0.6, bal:0.4, rand:0.3, seed:55 },
+    { name: 'chaos_orange',  palette: 'modern', vert:7, horz:8, thick:1, density:0.8, dist:0.2, bal:0.2, rand:0.9, seed:999 }
+  ];
+
+  // color palettes (simplified, matching generator)
+  const palettes = {
+    classic: ['#D12E2E', '#2E4A7A', '#E3B23C'],
+    modern: ['#2E5E4E', '#C44545', '#4A6FA5'],
+    grayscale: ['#222', '#555', '#888'],
+    primary: ['#FF4136', '#0074D9', '#FFDC00'],
+    pastel: ['#FFB3BA', '#BAE1FF', '#C4E3CB'],
+    monochrome: ['#000', '#000', '#000']
+  };
+
+  // library array holds generated SVG strings + names
+  let library = [];
+
+  // current preview parameters & svg
+  let currentSVG = '';
+  let currentName = 'modern_teal';
+  let currentParams = { vert:5, horz:5, density:0.4, palette:'modern' };
+
+  // ---------- helper: generate SVG from params ----------
+  function generateSVGFromParams(params) {
+    const size = 200;
+    const margin = 4;
+    const { vert: vertLines, horz: horzLines, thick, density, palette: palName, dist, bal, rand, seed } = params;
+
+    // seeded random (simple)
+    let seedVal = seed || 42;
+    const rng = () => {
+      seedVal = (seedVal * 9301 + 49297) % 233280;
+      return seedVal / 233280;
+    };
+
+    const palette = palettes[palName] || palettes.modern;
+
+    // grid lines (simplified but characteristic)
+    let vPos = [], hPos = [];
+    for (let i=0; i<=vertLines; i++) {
+      let t = i/vertLines;
+      t = t * (1 - rand*0.6) + (rng() * rand*0.6);
+      vPos.push(Math.round(4 + t * 192));
+    }
+    for (let i=0; i<=horzLines; i++) {
+      let t = i/horzLines;
+      t = t * (1 - rand*0.6) + (rng() * rand*0.6);
+      hPos.push(Math.round(4 + t * 192));
+    }
+    vPos = [...new Set(vPos.sort((a,b)=>a-b))];
+    hPos = [...new Set(hPos.sort((a,b)=>a-b))];
+
+    let paths = [];
+    // background white
+    paths.push(`<rect width="200" height="200" fill="white"/>`);
+
+    // rectangles
+    for (let i=0; i<vPos.length-1; i++) {
+      for (let j=0; j<hPos.length-1; j++) {
+        const x = vPos[i], y = hPos[j];
+        const w = vPos[i+1]-x, h = hPos[j+1]-y;
+        if (w<2 || h<2) continue;
+        let prob = density;
+        if (bal>0.5) {
+          const posScore = (i/vPos.length + j/hPos.length)/2;
+          prob = density * (0.7 + posScore * bal * 0.5);
+        }
+        if (rng() < prob) {
+          const col = palette[Math.floor(rng() * palette.length)];
+          paths.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${col}"/>`);
+        }
+      }
+    }
+    // lines
+    const lw = thick || 2;
+    vPos.forEach(x => { if (x>4 && x<196) paths.push(`<path d="M${x},4 L${x},196" stroke="#111" stroke-width="${lw}"/>`); });
+    hPos.forEach(y => { if (y>4 && y<196) paths.push(`<path d="M4,${y} L196,${y}" stroke="#111" stroke-width="${lw}"/>`); });
+
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">${paths.join('')}</svg>`;
+    return svg;
+  }
+
+  // generate a name based on palette + randomness
+  function coinName(palette, rand, vert, horz) {
+    const palPart = palette.charAt(0).toUpperCase() + palette.slice(1,4);
+    const style = rand > 0.6 ? 'wild' : (rand > 0.3 ? 'mixed' : 'calm');
+    return `${palPart}_${style}_${vert}x${horz}`.toLowerCase();
+  }
+
+  // update preview from current params (use first db item as default)
+  function updatePreviewFromParams(params, name) {
+    currentParams = params;
+    currentName = name || coinName(params.palette, params.rand, params.vert, params.horz);
+    const svg = generateSVGFromParams(params);
+    currentSVG = svg;
+
+    const previewSvg = document.getElementById('previewSvg');
+    previewSvg.innerHTML = svg.replace('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">', '').replace('</svg>', '');
+    document.getElementById('previewName').innerText = currentName;
+    document.getElementById('previewDetails').innerText = `${params.vert}v x ${params.horz}h · dens ${params.density}`;
+  }
+
+  // quick preset from db
+  function quickPreset(type) {
+    let entry;
+    if (type === 'classic') entry = gridDB[0];
+    else if (type === 'modern') entry = gridDB[1];
+    else if (type === 'chaotic') entry = gridDB[5];
+    else entry = gridDB[1];
+    updatePreviewFromParams(entry, entry.name);
+  }
+
+  // randomize (lite)
+  function randomizeAndPreview() {
+    const palList = ['classic','modern','primary','pastel','grayscale'];
+    const palette = palList[Math.floor(Math.random() * palList.length)];
+    const vert = Math.floor(Math.random() * 6) + 3;
+    const horz = Math.floor(Math.random() * 6) + 3;
+    const thick = 1 + Math.random() * 3;
+    const density = 0.3 + Math.random() * 0.5;
+    const dist = Math.random() * 0.8;
+    const bal = Math.random() * 0.8;
+    const rand = Math.random() * 0.8;
+    const seed = Math.floor(Math.random() * 1000);
+    const params = { vert, horz, thick, density, palette, dist, bal, rand, seed };
+    const newName = coinName(palette, rand, vert, horz) + '_' + Math.floor(Math.random()*100);
+    updatePreviewFromParams(params, newName);
+  }
+
+  // add current preview to library
+  function addCurrentToLibrary() {
+    library.push({ svg: currentSVG, name: currentName, params: {...currentParams} });
+    renderLibrary();
+  }
+
+  // render library cards (48x48 preview)
+  function renderLibrary() {
+    const container = document.getElementById('libraryContainer');
+    container.innerHTML = '';
+    if (library.length === 0) {
+      container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:1rem;">⬜ tap +ADD to build collection</div>';
+    } else {
+      library.forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = 'library-card';
+        card.setAttribute('data-index', idx);
+
+        // tiny preview
+        const svgPreview = document.createElement('div');
+        svgPreview.className = 'card-preview';
+        // strip full svg to fit 48px viewBox (keep viewBox 200)
+        let raw = item.svg;
+        if (raw.includes('<svg')) {
+          raw = raw.replace('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">', '');
+          raw = raw.replace('</svg>', '');
+        }
+        svgPreview.innerHTML = `<svg width="48" height="48" viewBox="0 0 200 200">${raw}</svg>`;
+
+        const nameSpan = document.createElement('div');
+        nameSpan.className = 'card-name';
+        nameSpan.innerText = item.name;
+
+        card.appendChild(svgPreview);
+        card.appendChild(nameSpan);
+
+        // click: load into preview
+        card.addEventListener('click', () => {
+          currentSVG = item.svg;
+          currentName = item.name;
+          currentParams = item.params;
+          document.getElementById('previewSvg').innerHTML = item.svg.replace('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">', '').replace('</svg>', '');
+          document.getElementById('previewName').innerText = item.name;
+          document.getElementById('previewDetails').innerText = `${item.params.vert}v x ${item.params.horz}h · dens ${item.params.density}`;
+        });
+
+        container.appendChild(card);
+      });
+    }
+    document.getElementById('libCount').innerText = library.length + ' grid' + (library.length!==1?'s':'');
+  }
+
+  // copy current SVG
+  function copyCurrentSVG() {
+    navigator.clipboard.writeText(currentSVG).then(() => alert('SVG copied'));
+  }
+
+  function downloadCurrentSVG() {
+    const blob = new Blob([currentSVG], {type:'image/svg+xml'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `mondrian_${currentName}.svg`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // load initial library from gridDB (first 6 entries)
+  function initLibraryFromDB() {
+    gridDB.forEach((entry, idx) => {
+      const svg = generateSVGFromParams(entry);
+      library.push({ svg, name: entry.name, params: entry });
+    });
+    renderLibrary();
+    // set preview to first
+    updatePreviewFromParams(gridDB[1], gridDB[1].name);
+  }
+
+  window.onload = initLibraryFromDB;
+</script>
+</body>
+</html>
